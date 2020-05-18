@@ -7,5 +7,5 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-redis/redis/v7 v7.2.0
 	github.com/jinzhu/gorm v1.9.12
-	github.com/thanhpk/randstr v1.0.4 // indirect
+	github.com/thanhpk/randstr v1.0.4
 )
