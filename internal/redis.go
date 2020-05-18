@@ -5,17 +5,13 @@ import (
 	"time"
 )
 
-
-
-
-
-var ExpirationTime = 1200  * 1000000000
+var ExpirationTime = 1200 * 1000000000
 
 func GetClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "@Ali@021021", // no password set
-		DB:       0,  // use default DB
+		DB:       0,             // use default DB
 	})
 	err := client.Set("key", "value", 0).Err()
 	if err != nil {
@@ -41,10 +37,10 @@ func (s *Server) getMessage(srcUsername string, destUsername string) string {
 	return val
 }
 
-func (s *Server) setUserToken(username string, token string)  {
-	s.RedisClient.Set(username + "Token", token, time.Duration(ExpirationTime))
+func (s *Server) setUserToken(username string, token string) {
+	s.RedisClient.Set(username+"Token", token, time.Duration(ExpirationTime))
 }
 
-func (s *Server) setUsersMessage(srcUsername string, destUsername string, message string) string {
-	s.RedisClient.Set(srcUsername + destUsername + "message", message, 0)
+func (s *Server) setUsersMessage(srcUsername string, destUsername string, message string) {
+	s.RedisClient.Set(srcUsername+destUsername+"message", message, 0)
 }

@@ -1,16 +1,26 @@
 package internal
 
 import (
+	"github.com/jinzhu/gorm"
 	"log"
 	"time"
-	"github.com/jinzhu/gorm"
 )
 
 type Messages struct {
-	SrcUsername string `json:"src_username"`
+	gorm.Model
+	SrcUsername  string `json:"src_username"`
 	DestUsername string `json:"dest_username"`
+	Text         string `json:"text"`
 }
 
+type FilesData struct {
+	gorm.Model
+	SrcUsername  string `json:"src_username"`
+	DestUsername string `json:"dest_username"`
+	Data         string `json:"data" gorm:"type:varchar(8192)"`
+	Chunk        int    `json:"chunk"`
+	Key          string `json:"key"`
+}
 
 func MakeMigrations(connectionString string) *gorm.DB {
 	var db *gorm.DB
@@ -30,8 +40,7 @@ func MakeMigrations(connectionString string) *gorm.DB {
 		}
 		retryCount--
 	}
-	db.AutoMigrate(&MessagesIdentity{})
+	db.AutoMigrate(&FilesData{})
 	db.AutoMigrate(&Messages{})
-	db.AutoMigrate(&KeyTable{})
 	return db
 }

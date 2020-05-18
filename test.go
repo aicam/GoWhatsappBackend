@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/aicam/secure-messenger/internal/cryptoUtils"
 	"github.com/go-redis/redis/v7"
-	"github.com/thanhpk/randstr"
 	"log"
 	"time"
 )
@@ -11,11 +11,12 @@ import (
 type JsStruct struct {
 	Hash []byte `json:"hash"`
 }
+
 func ExampleClient() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "@Ali@021021", // no password set
-		DB:       0,  // use default DB
+		DB:       0,             // use default DB
 	})
 	err := client.Set("key", "value", 0).Err()
 	if err != nil {
@@ -40,7 +41,7 @@ func ExampleClient() {
 	if err != nil {
 		panic(err)
 	}
-	time.Sleep(10*time.Second)
+	time.Sleep(10 * time.Second)
 	err = client.Set("keye", "value", 1000000000).Err()
 	if err != nil {
 		panic(err)
@@ -49,6 +50,8 @@ func ExampleClient() {
 	// key2 does not exist
 }
 func main() {
-	log.Print(randstr.Base64(25))
+	//log.Print(randstr.Base64(25))
+	p, _ := cryptoUtils.GenerateKeyPair(256)
+	log.Print(cryptoUtils.ExportRsaPrivateKeyAsPemStr(p))
 	ExampleClient()
 }
