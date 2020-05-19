@@ -6,12 +6,12 @@ import (
 	"net/http"
 )
 
-const DatabaseConnectionString = "aicam:021021ali@tcp(127.0.0.1:3306)/firebase?charset=utf8mb4&parseTime=True"
+const DatabaseConnectionString = "aicam:021021ali@tcp(127.0.0.1:3306)/messenger?charset=utf8mb4&parseTime=True"
 
 func main() {
 	s := internal.NewServer()
-	//db := internal.MakeMigrations(DatabaseConnectionString)
-	//s.DB = db
+	db := internal.MakeMigrations(DatabaseConnectionString)
+	s.DB = db
 	s.RedisClient = internal.GetClient()
 	s.Route()
 	err := http.ListenAndServe("0.0.0.0:4300", s.Router)

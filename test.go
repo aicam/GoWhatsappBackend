@@ -52,10 +52,12 @@ func ExampleClient() {
 	// key2 does not exist
 }
 func main() {
-	//log.Print(randstr.Base64(25))
+	log.Print(randstr.Base64(25))
 	_, p := cryptoUtils.GenerateKeyPair(1150)
 	log.Print(len([]byte(randstr.String(9))) > p.Size()-2*sha256.New().Size()-2)
 	log.Print(cryptoUtils.EncryptWithPublicKey([]byte(randstr.String(9)), p))
+	pub, _ := cryptoUtils.ParseRsaPublicKeyFromPemStr("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1d/td18P6Ysfo4wa0PU+L8JPgZGj+jX5g2QHQTbEOrWh5M+sO1dIoJuGriJZlB3s601FCt8vFAZjYbouQtc1BlPVdW8ORDnARMMYm39JkYqH7KTiAfpS6Wv5IG8QThQlgYnP0ZB+MBGp5N/Cs9FIdJUj/XDEEdyXc0UIgR+FfCLWkX5kGlOdGkTFfpsilSaFBIqyerRaoSXkwrRlQDKR7rH4Z07HBOkGrDj6nEIUlz7Hn/xasIXKB0kEw3k8PyFPgH4it5ikxDKvF62F2TSgda6VWqFxtE4n0Du0/o5FN/wZM1Byg3DwAzwj9kiFIseMCXafZqaYzuQg6ey3aL5HNwIDAQAB\n-----END PUBLIC KEY-----")
+	log.Print(cryptoUtils.EncryptWithPublicKey([]byte(randstr.Base64(25)), pub))
 
 	ExampleClient()
 }

@@ -1,8 +1,10 @@
 package cryptoUtils
 
 import (
+	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha1"
 	"crypto/sha512"
 	"crypto/x509"
 	"encoding/pem"
@@ -91,9 +93,10 @@ func BytesToPublicKey(pub []byte) *rsa.PublicKey {
 }
 
 // EncryptWithPublicKey encrypts data with public key
-func EncryptWithPublicKey(msg []byte, pub *rsa.PublicKey) []byte {
-	hash := sha512.New()
-	ciphertext, err := rsa.EncryptOAEP(hash, rand.Reader, pub, msg, nil)
+func EncryptWithPublicKey(msg string, pub *rsa.PublicKey) []byte {
+	hash := sha1.New()
+	msgBytes := bytes.NewBufferString(msg)
+	ciphertext, err := rsa.EncryptOAEP(hash, rand.Reader, pub, msgBytes.Bytes(), nil)
 	if err != nil {
 		log.Print(err)
 	}

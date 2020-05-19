@@ -28,7 +28,7 @@ func (s *Server) getUserToken(username string) string {
 	return val
 }
 
-func (s *Server) getMessage(srcUsername string, destUsername string) string {
+func (s *Server) getMessageRedis(srcUsername string, destUsername string) string {
 	val, err := s.RedisClient.Get(srcUsername + destUsername + "message").Result()
 	if err == redis.Nil {
 		return ""
@@ -41,6 +41,6 @@ func (s *Server) setUserToken(username string, token string) {
 	s.RedisClient.Set(username+"Token", token, time.Duration(ExpirationTime))
 }
 
-func (s *Server) setUsersMessage(srcUsername string, destUsername string, message string) {
+func (s *Server) setUsersMessageRedis(srcUsername string, destUsername string, message string) {
 	s.RedisClient.Set(srcUsername+destUsername+"message", message, 0)
 }

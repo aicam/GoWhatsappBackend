@@ -20,7 +20,7 @@ func test() {
 		log.Printf("CIPHER KEY: %s\n", string(CIPHER_KEY))
 		log.Printf("ENCRYPTED: %s\n", encrypted)
 
-		if decrypted, err := decrypt(CIPHER_KEY, encrypted); err != nil {
+		if decrypted, err := DecryptAES(CIPHER_KEY, encrypted); err != nil {
 			log.Println(err)
 		} else {
 			log.Printf("DECRYPTED: %s\n", decrypted)
@@ -52,7 +52,7 @@ func encrypt(key []byte, message string) (encmess string, err error) {
 	return
 }
 
-func decrypt(key []byte, securemess string) (decodedmess string, err error) {
+func DecryptAES(key []byte, securemess string) (decodedmess string, err error) {
 	cipherText, err := base64.URLEncoding.DecodeString(securemess)
 	if err != nil {
 		return

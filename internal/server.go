@@ -32,7 +32,7 @@ func NewServer() *Server {
 		Router:      router,
 		RedisClient: nil,
 	}
-	newServer.ServerKey.PrivateKey, newServer.ServerKey.PublicKey = cryptoUtils.GenerateKeyPair(2048)
+	newServer.ServerKey.PrivateKey, newServer.ServerKey.PublicKey = cryptoUtils.GenerateKeyPair(1150)
 	newServer.ServerKey.PrivateKeyStr = cryptoUtils.ExportRsaPrivateKeyAsPemStr(newServer.ServerKey.PrivateKey)
 	publicKeyStr, err := cryptoUtils.ExportRsaPublicKeyAsPemStr(newServer.ServerKey.PublicKey)
 	if err != nil {
