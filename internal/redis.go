@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var ExpirationTime = 1200 * 1000000000
+var ExpirationTime = 60 * 60 * 1000000000
 
 func GetClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{

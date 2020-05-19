@@ -1,7 +1,5 @@
 package internal
 
-import "time"
-
 type SendResponseStruct struct {
 	Status    bool   `json:"status"`
 	ErrorText string `json:"error_text"`
@@ -9,12 +7,7 @@ type SendResponseStruct struct {
 		PublicKey  string `json:"public_key"`
 		SessionKey []byte `json:"session_key"`
 	} `json:"info"`
-	ReturnMessages []struct {
-		Text   string    `json:"text"`
-		Date   time.Time `json:"date"`
-		Sender string    `json:"sender"`
-		HMAC   string    `json:"hmac"`
-	} `json:"return_messages"`
+	ReturnMessages []Messages `json:"return_messages"`
 	ReturnFileData struct {
 		Data     string `json:"data"`
 		Chunk    int    `json:"chunk"`

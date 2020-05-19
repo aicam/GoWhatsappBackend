@@ -43,6 +43,17 @@ func (s *Server) test() gin.HandlerFunc {
 			return
 		}
 		// message
+		if body.Message.Offset != -1 {
+			res.ReturnMessages = s.getMessageDB(body.Info.SrcUsername, body.Info.DestUsername, body.Message.Offset, srcUserToken)
+		} else {
+			res.ReturnMessages = append(res.ReturnMessages, Messages{
+				SrcUsername:  body.Info.DestUsername,
+				DestUsername: body.Info.DestUsername,
+				Text:         s.getMessageRedis(body.Info.SrcUsername, body.Info.DestUsername),
+			})
+		}
+		log.Print(srcUserToken)
+		c.JSON(http.StatusOK, res)
 		if body.Message.Text != "" {
 			mess, err := cryptoUtils.DecryptAES([]byte(srcUserToken), body.Message.Text)
 			if err == nil {
@@ -57,9 +68,7 @@ func (s *Server) test() gin.HandlerFunc {
 			} else {
 				log.Print(err)
 			}
-		}
-		if body.Message.Offset == 0 {
-
+			s.setUsersMessageRedis(body.Info.SrcUsername, body.Info.DestUsername, body.Message.Text)
 		}
 		// /message
 	}

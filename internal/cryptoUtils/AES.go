@@ -2,104 +2,29 @@ package cryptoUtils
 
 import (
 	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"encoding/base64"
-	"errors"
-	"fmt"
-	"io"
-	"log"
+	"encoding/hex"
 )
 
-func DecryptCBC(key, ciphertext []byte) (plaintext []byte, err error) {
-	var block cipher.Block
-
-	if block, err = aes.NewCipher(key); err != nil {
-		return
+func EncryptAES(key []byte, plaintext string) string {
+	c, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
 	}
+	out := make([]byte, len(plaintext))
+	c.Encrypt(out, []byte(plaintext))
 
-	if len(ciphertext) < aes.BlockSize {
-		fmt.Printf("ciphertext too short")
-		return
-	}
-
-	iv := ciphertext[:aes.BlockSize]
-	ciphertext = ciphertext[aes.BlockSize:]
-
-	cbc := cipher.NewCBCDecrypter(block, iv)
-	cbc.CryptBlocks(ciphertext, ciphertext)
-
-	plaintext = ciphertext
-
-	return
+	return hex.EncodeToString(out)
 }
 
-func test() {
-	CIPHER_KEY := []byte("0123456789012345")
-	msg := "A quick brown fox jumped over the lazy dog."
-
-	if encrypted, err := EncryptAES(CIPHER_KEY, msg); err != nil {
-		log.Println(err)
-	} else {
-		log.Printf("CIPHER KEY: %s\n", string(CIPHER_KEY))
-		log.Printf("ENCRYPTED: %s\n", encrypted)
-
-		if decrypted, err := DecryptAES(CIPHER_KEY, encrypted); err != nil {
-			log.Println(err)
-		} else {
-			log.Printf("DECRYPTED: %s\n", decrypted)
-		}
-	}
-}
-
-func EncryptAES(key []byte, message string) (encmess string, err error) {
-	plainText := []byte(message)
-
-	block, err := aes.NewCipher(key)
+func DecryptAES(key []byte, ct string) (decodedmess string, err error) {
+	ciphertext, _ := hex.DecodeString(ct)
+	c, err := aes.NewCipher(key)
 	if err != nil {
 		return
 	}
-
-	//IV needs to be unique, but doesn't have to be secure.
-	//It's common to put it at the beginning of the ciphertext.
-	cipherText := make([]byte, aes.BlockSize+len(plainText))
-	iv := cipherText[:aes.BlockSize]
-	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
-		return
-	}
-
-	stream := cipher.NewCFBEncrypter(block, iv)
-	stream.XORKeyStream(cipherText[aes.BlockSize:], plainText)
-
-	//returns to base64 encoded string
-	encmess = base64.URLEncoding.EncodeToString(cipherText)
-	return
-}
-
-func DecryptAES(key []byte, securemess string) (decodedmess string, err error) {
-	cipherText, err := base64.URLEncoding.DecodeString(securemess)
-	if err != nil {
-		return
-	}
-
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return
-	}
-	if len(cipherText) < aes.BlockSize {
-		err = errors.New("Ciphertext block size is too short!")
-		return
-	}
-
-	//IV needs to be unique, but doesn't have to be secure.
-	//It's common to put it at the beginning of the ciphertext.
-	iv := cipherText[:aes.BlockSize]
-	cipherText = cipherText[aes.BlockSize:]
-
-	stream := cipher.NewCFBDecrypter(block, iv)
-	// XORKeyStream can work in-place if the two arguments are the same.
-	stream.XORKeyStream(cipherText, cipherText)
-
-	decodedmess = string(cipherText)
+	plain := make([]byte, len(ciphertext))
+	c.Decrypt(plain, ciphertext)
+	s := string(plain[:])
+	decodedmess = s
 	return
 }

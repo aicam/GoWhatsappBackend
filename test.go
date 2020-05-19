@@ -1,55 +1,27 @@
 package main
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"github.com/aicam/secure-messenger/internal/cryptoUtils"
-	"github.com/go-redis/redis/v7"
 	"log"
-	"time"
 )
 
-type JsStruct struct {
-	Hash []byte `json:"hash"`
+func Decrypt(key []byte, ct string) {
+	ciphertext, _ := hex.DecodeString(ct)
+	c, err := aes.NewCipher(key)
+	if err != nil {
+		_ = fmt.Errorf("NewCipher(%d bytes) = %s", len(key), err)
+		panic(err)
+	}
+	plain := make([]byte, len(ciphertext))
+	c.Decrypt(plain, ciphertext)
+	s := string(plain[:])
+	fmt.Printf("AES Decrypyed Text:  %s\n", s)
 }
-
-func ExampleClient() {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "@Ali@021021", // no password set
-		DB:       0,             // use default DB
-	})
-	err := client.Set("key", "value", 0).Err()
-	if err != nil {
-		panic(err)
-	}
-
-	val, err := client.Get("key").Result()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("key", val)
-
-	val2, err := client.Get("key2").Result()
-	if err == redis.Nil {
-		fmt.Println("key2 does not exist")
-	} else if err != nil {
-		panic(err)
-	} else {
-		fmt.Println("key2", val2)
-	}
-	err = client.Set("keyv", "value", 1000000000).Err()
-	if err != nil {
-		panic(err)
-	}
-	time.Sleep(10 * time.Second)
-	err = client.Set("keye", "value", 1000000000).Err()
-	if err != nil {
-		panic(err)
-	}
-	// Output: key value
-	// key2 does not exist
-}
-
 func main() {
 	//js, _ := json.Marshal(internal.SendRequestStruct{
 	//	Info: struct {
@@ -79,7 +51,32 @@ func main() {
 	//	}{},
 	//})
 	//log.Print(string(js))
-	log.Print(cryptoUtils.EncryptAES([]byte("pvchJ2OVCO8YlHI9"), "hello world"))
-	sv, _ := cryptoUtils.DecryptCBC([]byte("pvchJ2OVCO8YlHI9"), []byte("89GQWAMj4QOcyjhmEuijUw=="))
-	log.Print(string(sv))
+	//log.Print(cryptoUtils.EncryptAES([]byte("pvchJ2OVCO8YlHI9"), "hello world"))
+	//sv, _ := cryptoUtils.DecryptCBC([]byte("pvchJ2OVCO8YlHI9"), []byte("89GQWAMj4QOcyjhmEuijUw=="))
+	//log.Print(string(sv))
+
+	ciphertext, err := base64.StdEncoding.DecodeString("lVVRybGxbp8xXj23g5x7RC3JZ24s2VXN6TBnQ922b6c=")
+	if err != nil {
+		log.Fatal(err)
+	}
+	key := []byte("pvchJ2OVCO8YlHI9")
+	log.Print(cryptoUtils.DecryptAES(key, "A5242EFC97A87A6926AB4688603409FD"))
+	c, err := aes.NewCipher(key)
+	if err != nil {
+		fmt.Println(err)
+	}
+	gcmDecrypt, err := cipher.NewGCM(c)
+	if err != nil {
+		fmt.Println(err)
+	}
+	nonceSize := gcmDecrypt.NonceSize()
+	if len(ciphertext) < nonceSize {
+		fmt.Println(err)
+	}
+	nonce, encryptedMessage := ciphertext[:nonceSize], ciphertext[nonceSize:]
+	plaintext, err := gcmDecrypt.Open(nil, nonce, encryptedMessage, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(plaintext))
 }
