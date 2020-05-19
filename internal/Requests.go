@@ -2,9 +2,10 @@ package internal
 
 type SendRequestStruct struct {
 	Info struct {
-		SrcUsername  string `json:"src_username"`
-		DestUsername string `json:"dest_username"`
-		PublicKey    string `json:"public_key"`
+		TokenRequested bool   `json:"token_requested"`
+		SrcUsername    string `json:"src_username"`
+		DestUsername   string `json:"dest_username"`
+		PublicKey      string `json:"public_key"`
 	} `json:"info"`
 	Message struct {
 		Text   string `json:"text"`

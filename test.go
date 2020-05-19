@@ -1,11 +1,9 @@
 package main
 
 import (
-	"crypto/sha256"
 	"fmt"
 	"github.com/aicam/secure-messenger/internal/cryptoUtils"
 	"github.com/go-redis/redis/v7"
-	"github.com/thanhpk/randstr"
 	"log"
 	"time"
 )
@@ -51,13 +49,37 @@ func ExampleClient() {
 	// Output: key value
 	// key2 does not exist
 }
-func main() {
-	log.Print(randstr.Base64(25))
-	_, p := cryptoUtils.GenerateKeyPair(1150)
-	log.Print(len([]byte(randstr.String(9))) > p.Size()-2*sha256.New().Size()-2)
-	log.Print(cryptoUtils.EncryptWithPublicKey([]byte(randstr.String(9)), p))
-	pub, _ := cryptoUtils.ParseRsaPublicKeyFromPemStr("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1d/td18P6Ysfo4wa0PU+L8JPgZGj+jX5g2QHQTbEOrWh5M+sO1dIoJuGriJZlB3s601FCt8vFAZjYbouQtc1BlPVdW8ORDnARMMYm39JkYqH7KTiAfpS6Wv5IG8QThQlgYnP0ZB+MBGp5N/Cs9FIdJUj/XDEEdyXc0UIgR+FfCLWkX5kGlOdGkTFfpsilSaFBIqyerRaoSXkwrRlQDKR7rH4Z07HBOkGrDj6nEIUlz7Hn/xasIXKB0kEw3k8PyFPgH4it5ikxDKvF62F2TSgda6VWqFxtE4n0Du0/o5FN/wZM1Byg3DwAzwj9kiFIseMCXafZqaYzuQg6ey3aL5HNwIDAQAB\n-----END PUBLIC KEY-----")
-	log.Print(cryptoUtils.EncryptWithPublicKey([]byte(randstr.Base64(25)), pub))
 
-	ExampleClient()
+func main() {
+	//js, _ := json.Marshal(internal.SendRequestStruct{
+	//	Info: struct {
+	//		TokenRequested bool   `json:"token_requested"`
+	//		SrcUsername    string `json:"src_username"`
+	//		DestUsername   string `json:"dest_username"`
+	//		PublicKey      string `json:"public_key"`
+	//	}{
+	//		TokenRequested: true,
+	//		SrcUsername: "aicam",
+	//		DestUsername: "sijal",
+	//		PublicKey: "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJaAuS55Ix1Cx04Ysc1k4SDQ6k++YHcV3wiZNZIykx4e4mjPTY2VdXTAxlJefJsNSJydD+7hmto3zRf+kwiSBp7UFGYMMfjqTx31kypjBkId2mxr2gD7PwUmF1WgzHjgpzICGxPporZlqnhOePeEA8afgi2+By1j583bGz/NmKEQIDAQAB\n-----END PUBLIC KEY-----",
+	//	},
+	//	Message: struct {
+	//		Text   string `json:"text"`
+	//		Offset int    `json:"offset"`
+	//		HMAC   string `json:"hmac"`
+	//	}{
+	//		Text: "Hello world!",
+	//	},
+	//	File: struct {
+	//		Data     string `json:"data"`
+	//		Chunk    string `json:"chunk"`
+	//		Finished bool   `json:"finished"`
+	//		FileName string `json:"file_name"`
+	//		HMAC     string `json:"hmac"`
+	//	}{},
+	//})
+	//log.Print(string(js))
+	log.Print(cryptoUtils.EncryptAES([]byte("pvchJ2OVCO8YlHI9"), "hello world"))
+	sv, _ := cryptoUtils.DecryptCBC([]byte("pvchJ2OVCO8YlHI9"), []byte("89GQWAMj4QOcyjhmEuijUw=="))
+	log.Print(string(sv))
 }

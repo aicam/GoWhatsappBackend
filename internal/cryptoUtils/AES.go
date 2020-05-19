@@ -6,15 +6,39 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 )
+
+func DecryptCBC(key, ciphertext []byte) (plaintext []byte, err error) {
+	var block cipher.Block
+
+	if block, err = aes.NewCipher(key); err != nil {
+		return
+	}
+
+	if len(ciphertext) < aes.BlockSize {
+		fmt.Printf("ciphertext too short")
+		return
+	}
+
+	iv := ciphertext[:aes.BlockSize]
+	ciphertext = ciphertext[aes.BlockSize:]
+
+	cbc := cipher.NewCBCDecrypter(block, iv)
+	cbc.CryptBlocks(ciphertext, ciphertext)
+
+	plaintext = ciphertext
+
+	return
+}
 
 func test() {
 	CIPHER_KEY := []byte("0123456789012345")
 	msg := "A quick brown fox jumped over the lazy dog."
 
-	if encrypted, err := encrypt(CIPHER_KEY, msg); err != nil {
+	if encrypted, err := EncryptAES(CIPHER_KEY, msg); err != nil {
 		log.Println(err)
 	} else {
 		log.Printf("CIPHER KEY: %s\n", string(CIPHER_KEY))
@@ -28,7 +52,7 @@ func test() {
 	}
 }
 
-func encrypt(key []byte, message string) (encmess string, err error) {
+func EncryptAES(key []byte, message string) (encmess string, err error) {
 	plainText := []byte(message)
 
 	block, err := aes.NewCipher(key)
@@ -62,7 +86,6 @@ func DecryptAES(key []byte, securemess string) (decodedmess string, err error) {
 	if err != nil {
 		return
 	}
-
 	if len(cipherText) < aes.BlockSize {
 		err = errors.New("Ciphertext block size is too short!")
 		return

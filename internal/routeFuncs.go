@@ -21,12 +21,13 @@ func (s *Server) test() gin.HandlerFunc {
 		res.Info.PublicKey = s.ServerKey.PublicKeyStr
 		srcUserToken := s.getUserToken(body.Info.SrcUsername)
 		destUserToken := s.getUserToken(body.Info.DestUsername)
-		if srcUserToken == "" || body.Message.Text == "" {
+		if srcUserToken == "" || body.Info.TokenRequested {
 			var newToken string
 			if destUserToken != "" {
 				s.setUserToken(body.Info.SrcUsername, destUserToken)
+				newToken = destUserToken
 			} else {
-				newToken = randstr.String(54)
+				newToken = randstr.String(16)
 				s.setUserToken(body.Info.SrcUsername, newToken)
 				s.setUserToken(body.Info.DestUsername, newToken)
 			}
@@ -42,13 +43,20 @@ func (s *Server) test() gin.HandlerFunc {
 			return
 		}
 		// message
-		mess, err := cryptoUtils.DecryptAES([]byte(srcUserToken), body.Message.Text)
-		if err == nil {
-			_ = s.addMessage(Messages{
-				SrcUsername:  body.Info.SrcUsername,
-				DestUsername: body.Info.DestUsername,
-				Text:         mess,
-			})
+		if body.Message.Text != "" {
+			mess, err := cryptoUtils.DecryptAES([]byte(srcUserToken), body.Message.Text)
+			if err == nil {
+				err = s.addMessage(Messages{
+					SrcUsername:  body.Info.SrcUsername,
+					DestUsername: body.Info.DestUsername,
+					Text:         mess,
+				})
+				if err != nil {
+					log.Print(err)
+				}
+			} else {
+				log.Print(err)
+			}
 		}
 		if body.Message.Offset == 0 {
 
