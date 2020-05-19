@@ -21,6 +21,7 @@ func (s *Server) test() gin.HandlerFunc {
 		res.Info.PublicKey = s.ServerKey.PublicKeyStr
 		srcUserToken := s.getUserToken(body.Info.SrcUsername)
 		destUserToken := s.getUserToken(body.Info.DestUsername)
+		// New token
 		if srcUserToken == "" || body.Info.TokenRequested {
 			var newToken string
 			if destUserToken != "" {
@@ -42,6 +43,7 @@ func (s *Server) test() gin.HandlerFunc {
 			c.JSON(http.StatusOK, res)
 			return
 		}
+
 		// message
 		if body.Message.Offset != -1 {
 			res.ReturnMessages = s.getMessageDB(body.Info.SrcUsername, body.Info.DestUsername, body.Message.Offset, srcUserToken)
@@ -52,6 +54,18 @@ func (s *Server) test() gin.HandlerFunc {
 				Text:         s.getMessageRedis(body.Info.SrcUsername, body.Info.DestUsername),
 			})
 		}
+		// /message
+		if body.File.FileName != "" {
+			s.DB.Save(FilesData{
+				SrcUsername:  body.Info.SrcUsername,
+				DestUsername: body.Info.DestUsername,
+				FileName:     body.File.FileName,
+				Data:         body.File.Data,
+				Chunk:        body.File.Chunk,
+				Key:          srcUserToken,
+			})
+		}
+		res.Status = true
 		log.Print(srcUserToken)
 		c.JSON(http.StatusOK, res)
 		if body.Message.Text != "" {
@@ -70,6 +84,5 @@ func (s *Server) test() gin.HandlerFunc {
 			}
 			s.setUsersMessageRedis(body.Info.SrcUsername, body.Info.DestUsername, body.Message.Text)
 		}
-		// /message
 	}
 }

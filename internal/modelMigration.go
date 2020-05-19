@@ -18,6 +18,7 @@ type FilesData struct {
 	gorm.Model
 	SrcUsername  string `json:"src_username"`
 	DestUsername string `json:"dest_username"`
+	FileName     string `json:"file_name"`
 	Data         string `json:"data" gorm:"type:varchar(8192)"`
 	Chunk        int    `json:"chunk"`
 	Key          string `json:"key"`

@@ -8,6 +8,7 @@ type SendResponseStruct struct {
 		SessionKey []byte `json:"session_key"`
 	} `json:"info"`
 	ReturnMessages []Messages `json:"return_messages"`
+	HMAC           string     `json:"hmac"`
 	ReturnFileData struct {
 		Data     string `json:"data"`
 		Chunk    int    `json:"chunk"`
