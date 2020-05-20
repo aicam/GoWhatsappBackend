@@ -6,6 +6,7 @@ import (
 )
 
 var ExpirationTime = 60 * 60 * 1000000000
+var MessageExpiration = 20 * time.Minute
 
 func GetClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
@@ -28,13 +29,21 @@ func (s *Server) getUserToken(username string) string {
 	return val
 }
 
-func (s *Server) getMessageRedis(srcUsername string, destUsername string) string {
-	val, err := s.RedisClient.Get(srcUsername + destUsername + "message").Result()
-	if err == redis.Nil {
-		return ""
+func (s *Server) getMessageRedis(srcUsername string, destUsername string) []Messages {
+	returnMessages := []Messages{}
+	for i := 0; i < 100; i++ {
+		val, err := s.RedisClient.Get(srcUsername + destUsername + "message" + string(i)).Result()
+		if err == redis.Nil {
+			break
+		}
+		returnMessages = append(returnMessages, Messages{
+			SrcUsername:  srcUsername,
+			DestUsername: destUsername,
+			Text:         val,
+		})
+		s.RedisClient.Del(srcUsername + destUsername + "message" + string(i))
 	}
-	s.RedisClient.Del(srcUsername + destUsername + "message")
-	return val
+	return returnMessages
 }
 
 func (s *Server) setUserToken(username string, token string) {
@@ -42,5 +51,11 @@ func (s *Server) setUserToken(username string, token string) {
 }
 
 func (s *Server) setUsersMessageRedis(srcUsername string, destUsername string, message string) {
-	s.RedisClient.Set(srcUsername+destUsername+"message", message, 0)
+	for i := 0; i < 100; i++ {
+		_, err := s.RedisClient.Get(srcUsername + destUsername + "message" + string(i)).Result()
+		if err == redis.Nil {
+			s.RedisClient.Set(srcUsername+destUsername+"message", message+string(i), MessageExpiration)
+			break
+		}
+	}
 }
