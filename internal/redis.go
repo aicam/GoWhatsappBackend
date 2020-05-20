@@ -9,16 +9,19 @@ var ExpirationTime = 60 * 60 * 1000000000
 var MessageExpiration = 20 * time.Minute
 
 func GetClient() *redis.Client {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "@Ali@021021", // no password set
-		DB:       0,             // use default DB
-	})
-	err := client.Set("key", "value", 0).Err()
-	if err != nil {
-		panic(err)
+	for i := 0; i < 20; i++ {
+		client := redis.NewClient(&redis.Options{
+			Addr:     "redis-db:6379",
+			Password: "@Ali@021021", // no password set
+			DB:       0,             // use default DB
+		})
+		err := client.Set("key", "value", 0).Err()
+		if err == nil {
+			return client
+		}
+		time.Sleep(2 * time.Second)
 	}
-	return client
+	return nil
 }
 
 func (s *Server) getUserToken(username string) string {
