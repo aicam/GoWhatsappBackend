@@ -53,9 +53,21 @@ func (s *Server) test() gin.HandlerFunc {
 		}
 		res.Status = true
 		log.Print(srcUserToken)
-		c.JSON(http.StatusOK, res)
 		// /message
-		if body.File.FileName != "" {
+		// file
+		if body.File.FileName != "" && body.File.Data == "" {
+			fileData := FilesData{DestUsername: body.Info.SrcUsername, SrcUsername: body.Info.DestUsername,
+				Chunk: body.File.Chunk, FileName: body.File.FileName}
+			s.DB.Where(&fileData).Find(&fileData)
+			res.ReturnFileData.FileName = fileData.FileName
+			res.ReturnFileData.Chunk = fileData.Chunk
+			res.ReturnFileData.Data = fileData.Data
+			res.ReturnFileData.HMAC = fileData.HMAC
+			res.ReturnFileData.Key = cryptoUtils.EncryptAES([]byte(srcUserToken), fileData.Key)
+		}
+
+		c.JSON(http.StatusOK, res)
+		if body.File.FileName != "" && body.File.Data != "" {
 			if cryptoUtils.ComputeHmac256(body.File.Data[:100], srcUserToken) != body.File.HMAC {
 				return
 			}
@@ -70,7 +82,6 @@ func (s *Server) test() gin.HandlerFunc {
 		}
 		if body.Message.Text != "" {
 			if cryptoUtils.ComputeHmac256(body.Message.Text, srcUserToken) != body.Message.HMAC {
-				log.Print(cryptoUtils.ComputeHmac256(body.Message.Text, srcUserToken))
 				return
 			}
 			s.setUsersMessageRedis(body.Info.SrcUsername, body.Info.DestUsername, body.Message.Text)

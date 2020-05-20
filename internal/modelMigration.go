@@ -21,6 +21,7 @@ type FilesData struct {
 	FileName     string `json:"file_name"`
 	Data         string `json:"data" gorm:"type:varchar(8192)"`
 	Chunk        int    `json:"chunk"`
+	HMAC         string `json:"hmac"`
 	Key          string `json:"key"`
 }
 
