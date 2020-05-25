@@ -1,0 +1,42 @@
+version: '3.3'
+
+volumes:
+  db: {}
+  rdb: {}
+  mdb: {}
+
+services:
+  # MySQL
+  mysql-db:
+    image: mysql:5.7
+    ports:
+      - "3306"
+    volumes:
+      - db:/var/lib/mysql
+      - ./build/docker/mysql/conf.d:/etc/mysql/conf.d
+      - ./build/docker/mysql/init.d:/docker-entrypoint-initdb.d
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 021021ali
+      MYSQL_DATABASE: messenger
+      MYSQL_USER: aicam
+      MYSQL_PASSWORD: 021021ali
+
+  # Redis
+  redis-db:
+    image: redis:latest
+    ports:
+      - "6379"
+    volumes:
+      - rdb:/data
+    restart: always
+    command: redis-server --requirepass @Ali@021021 --appendonly yes
+  messenger-back:
+    build:
+      - context: .
+    depends_on:
+      - mysql-db
+      - redis-db
+    ports:
+      - "8000:4300"
+    restart: on-failure

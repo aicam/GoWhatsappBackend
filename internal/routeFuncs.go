@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) test() gin.HandlerFunc {
+func (s *Server) trade() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		body := SendRequestStruct{}
 		res := SendResponseStruct{}
