@@ -25,6 +25,13 @@ type FilesData struct {
 	Key          string `json:"key"`
 }
 
+type Users struct {
+	gorm.Model
+	Username            string `json:"username"`
+	Password            string `json:"password"`
+	IdentificationToken string `json:"identification_token"`
+}
+
 func MakeMigrations(connectionString string) *gorm.DB {
 	var db *gorm.DB
 	var err error
