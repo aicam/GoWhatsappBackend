@@ -27,3 +27,9 @@ func (s *Server) getMessageDB(srcUsername string, destUsername string, limit int
 	}
 	return returnMessages
 }
+
+func (s *Server) getUserPassword(username string) string {
+	var user Users
+	s.DB.Where(&Users{Username: username}).Find(&user)
+	return user.Password
+}
