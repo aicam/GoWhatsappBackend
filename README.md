@@ -2,7 +2,7 @@
 
 This repository contains a full backend to build a messenger with option to send messages and 
 files with secure encryption at the same time.
-The security strategy is almost same as <a href="https://scontent.whatsapp.net/v/t61.22868-34/68135620_760356657751682_6212997528851833559_n.pdf/WhatsApp-Security-Whitepaper.pdf?_nc_sid=41cc27&_nc_oc=AQkJcUSq9G6NGOZ0ZuRULw_icW7l1Fq-HLh2i2KELDnTOnkpgfZCeAUpQU3pa7mkSLQ&_nc_ht=scontent.whatsapp.net&oh=1a7c6a379166027b672825a7f84c6ec9&oe=5ECCDC93">Whatsapp</a>.
+The security strategy is almost same as <a href="https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf">Whatsapp</a>.
 
 
 ## Getting Started
