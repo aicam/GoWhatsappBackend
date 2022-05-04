@@ -1,4 +1,4 @@
-# Messenger backend with rsa-1024 and AES-128
+# Messenger backend with RSA-1024 and AES-128
 
 This repository contains a full backend to build a messenger with option to send messages and 
 files with secure encryption at the same time.
