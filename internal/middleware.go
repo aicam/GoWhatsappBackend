@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"github.com/aicam/secure-messenger/internal/cryptoUtils"
+	"github.com/aicam/GoWhatsappBackend/internal/cryptoUtils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

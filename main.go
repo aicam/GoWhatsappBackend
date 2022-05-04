@@ -1,16 +1,12 @@
 package main
 
-/*
-	https://github.com/aicam/messenger-backend
-*/
-
 import (
-	"github.com/aicam/secure-messenger/internal"
+	"github.com/aicam/GoWhatsappBackend/internal"
 	"log"
 	"net/http"
 )
 
-const DatabaseConnectionString = "aicam:021021ali@tcp(mysql-db:3306)/messenger?charset=utf8mb4&parseTime=True"
+const DatabaseConnectionString = "aicam:12345@tcp(mysql-db:3306)/messenger?charset=utf8mb4&parseTime=True"
 
 func main() {
 	s := internal.NewServer()

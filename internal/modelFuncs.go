@@ -1,6 +1,6 @@
 package internal
 
-import "github.com/aicam/secure-messenger/internal/cryptoUtils"
+import "github.com/aicam/GoWhatsappBackend/internal/cryptoUtils"
 
 func (s *Server) addMessage(message Messages) error {
 	err := s.DB.Save(&message).Error

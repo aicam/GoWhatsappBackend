@@ -1,4 +1,4 @@
-module github.com/aicam/secure-messenger
+module github.com/aicam/GoWhatsappBackend
 
 go 1.14
 

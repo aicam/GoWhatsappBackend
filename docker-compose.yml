@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.9'
 
 volumes:
   db: {}
@@ -20,7 +20,7 @@ services:
       MYSQL_ROOT_PASSWORD: 021021ali
       MYSQL_DATABASE: messenger
       MYSQL_USER: aicam
-      MYSQL_PASSWORD: 021021ali
+      MYSQL_PASSWORD: 12345
 
   # Redis
   redis-db:
@@ -30,10 +30,9 @@ services:
     volumes:
       - rdb:/data
     restart: always
-    command: redis-server --requirepass @Ali@021021 --appendonly yes
-  messenger-back:
-    build:
-      - context: .
+    command: redis-server --requirepass 12345 --appendonly yes
+  messenger:
+    build: .
     depends_on:
       - mysql-db
       - redis-db

@@ -2,7 +2,7 @@ package internal
 
 import (
 	"crypto/rsa"
-	"github.com/aicam/secure-messenger/internal/cryptoUtils"
+	"github.com/aicam/GoWhatsappBackend/internal/cryptoUtils"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
